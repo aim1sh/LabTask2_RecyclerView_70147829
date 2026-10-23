@@ -136,7 +136,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="12dp"
-                        android:text="Dr. Muhammad Usman"
+                        android:text="Sir Muhammad Arsalan"
                         android:textColor="@color/text_primary"
                         android:textSize="15sp"
                         android:textStyle="bold" />
@@ -163,7 +163,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="12dp"
-                        android:text="usman.faculty@uol.edu.pk"
+                        android:text="muhammad.arsalan@uol.edu.pk"
                         android:textColor="@color/primary"
                         android:textSize="14sp" />
 

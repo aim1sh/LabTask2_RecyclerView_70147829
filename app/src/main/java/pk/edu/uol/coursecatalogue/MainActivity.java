@@ -55,8 +55,8 @@ public class MainActivity extends AppCompatActivity implements CourseAdapter.OnI
                 "CS02310",
                 "Mobile Application Development",
                 3,
-                "Dr. Muhammad Usman",
-                "usman.faculty@uol.edu.pk",
+                "Sir Muhammad Arsalan",
+                "muhammad.arsalan@uol.edu.pk",
                 "Focuses on native Android application development using Java, Android Studio, UI architecture with RecyclerView, explicit and implicit Intents, data passing, life cycles, and responsive layouts."
         ));
 

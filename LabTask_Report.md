@@ -56,8 +56,8 @@ The project demonstrates advanced competency in core Android architecture compon
   - `private String code;` (e.g., `"CS02310"`)
   - `private String title;` (e.g., `"Mobile Application Development"`)
   - `private int creditHours;` (e.g., `3`)
-  - `private String instructor;` (e.g., `"Dr. Muhammad Usman"`)
-  - `private String email;` (e.g., `"usman.faculty@uol.edu.pk"`)
+  - `private String instructor;` (e.g., `"Sir Muhammad Arsalan"`)
+  - `private String email;` (e.g., `"muhammad.arsalan@uol.edu.pk"`)
   - `private String description;` (Course overview, prerequisites, and learning outcomes)
 - **Implementation:**
   ```java
@@ -258,7 +258,7 @@ The project demonstrates advanced competency in core Android architecture compon
 ### Step 4: Data Population & LayoutManager Configuration (`MainActivity.java`)
 - **Description:** Constructs an `ArrayList<Course>` containing 10 authentic courses from the BS Software Engineering curriculum at The University of Lahore. Binds `rvCourses` with a `LinearLayoutManager` and attaches `CourseAdapter`.
 - **BS-SE Courses Configured:**
-  1. `CS02310` — Mobile Application Development (3 Cr. Hrs.) — Dr. Muhammad Usman
+  1. `CS02310` — Mobile Application Development (3 Cr. Hrs.) — Sir Muhammad Arsalan
   2. `SE03302` — Software Design and Architecture (3 Cr. Hrs.) — Engr. Ayesha Tariq
   3. `CS03104` — Artificial Intelligence (3 Cr. Hrs.) — Dr. Farhan Ahmed
   4. `SE03201` — Software Quality Engineering (3 Cr. Hrs.) — Ms. Hina Bashir
@@ -431,7 +431,7 @@ In Android's `RecyclerView` architecture, the responsibilities of **data adaptat
 
 #### Verification Across 3 Distinct Courses:
 Tapping different course cards demonstrates that each click deterministically navigates to the selected course:
-1. **Course 1:** `CS02310` — *Mobile Application Development* (Instructor: Dr. Muhammad Usman)
+1. **Course 1:** `CS02310` — *Mobile Application Development* (Instructor: Sir Muhammad Arsalan)
 2. **Course 2:** `SE03302` — *Software Design and Architecture* (Instructor: Engr. Ayesha Tariq)
 3. **Course 3:** `CS03104` — *Artificial Intelligence* (Instructor: Dr. Farhan Ahmed)
 
