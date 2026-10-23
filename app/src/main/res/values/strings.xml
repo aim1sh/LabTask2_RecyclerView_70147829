@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">UOL Course Catalogue</string>
+    <string name="faculty_title">Faculty of Information Technology</string>
+    <string name="dept_title">Department of Software Engineering</string>
+    <string name="programme_title">BS Software Engineering (BS-SE)</string>
+    <string name="catalogue_header">Course Catalogue</string>
+    <string name="catalogue_sub">Explore curriculum, credit distribution, and instructors</string>
+    <string name="email_instructor">Email Instructor</string>
+    <string name="instructor_label">Instructor</string>
+    <string name="email_label">Email Address</string>
+    <string name="credits_label">Credit Hours</string>
+    <string name="description_label">Course Overview</string>
+    <string name="no_email_app">No email client installed on this device.</string>
+</resources>

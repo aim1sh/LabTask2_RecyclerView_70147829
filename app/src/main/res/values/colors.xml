@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- University of Lahore Official Brand Colors -->
+    <color name="primary">#006747</color>
+    <color name="primary_dark">#004D35</color>
+    <color name="primary_light">#E0F2E9</color>
+    <color name="accent_gold">#D4AF37</color>
+    <color name="accent_gold_dark">#B89320</color>
+
+    <!-- Surfaces & Backgrounds -->
+    <color name="background">#F4F7F6</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="card_stroke">#E2E8F0</color>
+    <color name="card_highlight">#F8FAFC</color>
+
+    <!-- Typography -->
+    <color name="text_primary">#0F172A</color>
+    <color name="text_secondary">#475569</color>
+    <color name="text_muted">#94A3B8</color>
+    <color name="white">#FFFFFF</color>
+
+    <!-- Badges and Accents -->
+    <color name="badge_code_bg">#E0F2E9</color>
+    <color name="badge_code_text">#006747</color>
+    <color name="badge_credit_bg">#FEF3C7</color>
+    <color name="badge_credit_text">#92400E</color>
+
+    <!-- Status & Button Colors -->
+    <color name="btn_email">#006747</color>
+    <color name="btn_email_ripple">#004D35</color>
+    <color name="divider_color">#E2E8F0</color>
+</resources>

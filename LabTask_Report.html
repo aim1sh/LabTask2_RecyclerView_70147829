@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab Task Report — UOL Course Catalogue (RecyclerView &amp; Intent Architecture)</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+
+        :root {
+            --primary: #006747;
+            --primary-dark: #004D35;
+            --primary-light: #E0F2E9;
+            --accent: #D4AF37;
+            --accent-dark: #B89320;
+            --text-dark: #0F172A;
+            --text-muted: #475569;
+            --bg-light: #F8FAF9;
+            --border-color: #E2E8F0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: var(--text-dark);
+            background-color: #ECEFF1;
+            line-height: 1.6;
+            padding: 30px 15px;
+        }
+
+        .paper-sheet {
+            max-width: 900px;
+            margin: 0 auto 30px auto;
+            background: #FFFFFF;
+            padding: 45px 55px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            border: 1px solid var(--border-color);
+        }
+
+        @media print {
+            body {
+                background: #FFFFFF;
+                padding: 0;
+            }
+            .paper-sheet {
+                max-width: 100%;
+                margin: 0;
+                padding: 25px 35px;
+                box-shadow: none;
+                border: none;
+                border-radius: 0;
+            }
+            .page-break {
+                page-break-before: always;
+            }
+        }
+
+        .header-bar {
+            border-bottom: 3px solid var(--primary);
+            padding-bottom: 20px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-titles h1 {
+            font-size: 24px;
+            color: var(--primary);
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            margin-bottom: 4px;
+        }
+
+        .header-titles h2 {
+            font-size: 16px;
+            color: var(--text-dark);
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .header-titles p {
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .badge-pill {
+            background: var(--primary-light);
+            color: var(--primary);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            border: 1px solid #B7E4C7;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            text-align: right;
+        }
+
+        .meta-card {
+            background: #F8FAFC;
+            border: 1px solid var(--border-color);
+            border-left: 5px solid var(--primary);
+            border-radius: 8px;
+            padding: 18px 24px;
+            margin-bottom: 30px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .meta-item {
+            font-size: 13px;
+        }
+
+        .meta-item strong {
+            color: var(--text-dark);
+            font-weight: 700;
+            display: inline-block;
+            width: 130px;
+        }
+
+        .meta-item a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .meta-item a:hover {
+            text-decoration: underline;
+        }
+
+        h2.section-heading {
+            font-size: 18px;
+            color: var(--primary);
+            font-weight: 700;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 8px;
+            margin-top: 30px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+        }
+
+        h3.subsection-heading {
+            font-size: 15px;
+            color: var(--text-dark);
+            font-weight: 700;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        p, li {
+            font-size: 13.5px;
+            color: var(--text-dark);
+            line-height: 1.65;
+            margin-bottom: 10px;
+        }
+
+        ul, ol {
+            padding-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        .callout-box {
+            background: #F0FDF4;
+            border: 1px solid #BBF7D0;
+            border-left: 4px solid var(--primary);
+            padding: 14px 18px;
+            border-radius: 6px;
+            margin: 16px 0;
+            font-size: 13.5px;
+            color: #14532D;
+        }
+
+        .callout-box.warning {
+            background: #FEF3C7;
+            border-color: #FDE68A;
+            border-left-color: var(--accent-dark);
+            color: #78350F;
+        }
+
+        table.custom-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 18px 0;
+            font-size: 12.5px;
+        }
+
+        table.custom-table th, table.custom-table td {
+            border: 1px solid var(--border-color);
+            padding: 9px 12px;
+            text-align: left;
+        }
+
+        table.custom-table th {
+            background: #F1F5F9;
+            color: var(--text-dark);
+            font-weight: 700;
+        }
+
+        table.custom-table tr:nth-child(even) {
+            background: #F8FAFC;
+        }
+
+        pre {
+            background: #0F172A;
+            color: #E2E8F0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11.5px;
+            padding: 14px 16px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 14px 0;
+            line-height: 1.5;
+        }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: #F1F5F9;
+            color: var(--primary-dark);
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        pre code {
+            background: transparent;
+            color: inherit;
+            padding: 0;
+        }
+
+        .screenshot-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .screenshot-grid.grid-2 {
+            grid-template-columns: repeat(2, 1fr);
+            max-width: 650px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .screenshot-card {
+            background: #FFFFFF;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 8px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .screenshot-card img {
+            width: 100%;
+            height: auto;
+            border-radius: 6px;
+            border: 1px solid #E2E8F0;
+            display: block;
+        }
+
+        .screenshot-card .caption {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-top: 8px;
+        }
+
+        .flow-diagram {
+            background: #0F172A;
+            color: #38BDF8;
+            padding: 16px;
+            border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11.5px;
+            line-height: 1.5;
+            margin: 16px 0;
+            white-space: pre;
+            overflow-x: auto;
+        }
+
+        .q-card {
+            background: #F8FAFC;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 14px 18px;
+            margin-bottom: 12px;
+        }
+
+        .q-card .question {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 13.5px;
+            margin-bottom: 6px;
+        }
+
+        .q-card .answer {
+            font-size: 13px;
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+
+<div class="paper-sheet">
+
+    <!-- Top Header -->
+    <div class="header-bar">
+        <div class="header-titles">
+            <h1>The University of Lahore</h1>
+            <h2>Faculty of Information Technology — Department of Software Engineering</h2>
+            <p>Mobile Application Development (CS02310) — Lab Assignment No. 02</p>
+        </div>
+        <div>
+            <div class="badge-pill">Section S · 10 Marks</div>
+        </div>
+    </div>
+
+    <!-- Student Metadata -->
+    <div class="meta-card">
+        <div class="meta-item"><strong>Student Name:</strong> Aimish Umar</div>
+        <div class="meta-item"><strong>SAP ID:</strong> 70147829</div>
+        <div class="meta-item"><strong>Section / Term:</strong> Section S | 7th Semester</div>
+        <div class="meta-item"><strong>Academic Session:</strong> Fall 2026</div>
+        <div class="meta-item"><strong>Mapped CLO:</strong> CLO-4 (Bloom's C6: Creating)</div>
+        <div class="meta-item"><strong>PLO / Graduate Attribute:</strong> PLO-5 / GA-5 (Modern Tool Usage)</div>
+        <div class="meta-item" style="grid-column: span 2;">
+            <strong>GitHub Repository:</strong> 
+            <a href="https://github.com/aim1sh/LabTask2_RecyclerView_70147829" target="_blank">https://github.com/aim1sh/LabTask2_RecyclerView_70147829</a>
+        </div>
+    </div>
+
+    <!-- Executive Summary -->
+    <h2 class="section-heading">1. Executive Summary &amp; Architecture Overview</h2>
+    <p>
+        The objective of this laboratory assignment is to engineer a production-ready Android application named <strong>UOL Course Catalogue</strong> for students of the Department of Software Engineering. The application enables students to explore the BS-SE degree curriculum through a responsive, memory-optimized <code>RecyclerView</code> and drill down into course-specific details with one-tap faculty email dispatch.
+    </p>
+    <p>
+        The application is structured into two interconnected scenarios demonstrating core Android design patterns:
+    </p>
+    <ul>
+        <li><strong>Scenario 1 (Course List Screen):</strong> Employs the Model-View-Adapter (MVA) pattern via <code>Course</code>, <code>item_course.xml</code>, <code>CourseAdapter</code>, and <code>LinearLayoutManager</code> to render a scrolling list of elevated <code>CardView</code> components.</li>
+        <li><strong>Scenario 2 (Course Details Screen):</strong> Decouples touch dispatching via a custom <code>OnItemClickListener</code> inside the adapter, determines item indices using <code>getBindingAdapterPosition()</code>, passes structured course parameters to <code>CourseDetailActivity</code> via an <strong>Explicit Intent</strong> with key constants, dynamically sets screen titles with <code>setTitle()</code>, and triggers an <strong>Implicit Intent</strong> (<code>ACTION_SENDTO</code> with <code>mailto:</code>) protected by exception handling.</li>
+    </ul>
+
+    <!-- Marking Rubric Mapping -->
+    <h2 class="section-heading">2. Evaluation Rubric &amp; Evidence Mapping</h2>
+    <table class="custom-table">
+        <thead>
+            <tr>
+                <th>Assessed Task</th>
+                <th>Prescribed Evidence Looked For</th>
+                <th>Marks</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Scenario 1, Step 1</strong></td>
+                <td>Model class with private fields, constructor setting every field, public getter for each</td>
+                <td>1</td>
+                <td>Verified &amp; Fully Implemented</td>
+            </tr>
+            <tr>
+                <td><strong>Scenario 1, Steps 2–3</strong></td>
+                <td>CardView item layout; Adapter with static ViewHolder caching views and 3 overridden methods</td>
+                <td>2</td>
+                <td>Verified &amp; Fully Implemented</td>
+            </tr>
+            <tr>
+                <td><strong>Scenario 1, Step 4</strong></td>
+                <td>Data &amp; LayoutManager: &ge;8 courses, <code>LinearLayoutManager</code> set, adapter attached</td>
+                <td>1</td>
+                <td>Verified &amp; Fully Implemented</td>
+            </tr>
+            <tr>
+                <td><strong>Scenario 1, Step 5</strong></td>
+                <td>List test: Observation without <code>setLayoutManager()</code> captured, recorded, and explained</td>
+                <td>1</td>
+                <td>Verified &amp; Fully Implemented</td>
+            </tr>
+            <tr>
+                <td><strong>Scenario 2, Steps 1–2</strong></td>
+                <td>Item click &amp; Intent: Interface in adapter, listener in ViewHolder, position used to send tapped data</td>
+                <td>2</td>
+                <td>Verified &amp; Fully Implemented</td>
+            </tr>
+            <tr>
+                <td><strong>Scenario 2, Step 3</strong></td>
+                <td>Details screen: Declared in manifest; all extras received and displayed; title set to course code</td>
+                <td>1</td>
+                <td>Verified &amp; Fully Implemented</td>
+            </tr>
+            <tr>
+                <td><strong>Scenario 2, Step 4</strong></td>
+                <td>Email instructor: <code>ACTION_SENDTO</code> with course's email, protected by <code>try-catch</code> with Toast</td>
+                <td>1</td>
+                <td>Verified &amp; Fully Implemented</td>
+            </tr>
+            <tr>
+                <td><strong>Scenario 2, Step 5</strong></td>
+                <td>Testing &amp; explanation: 3 different detail screens captured; correct 2-line explanation of position</td>
+                <td>1</td>
+                <td>Verified &amp; Fully Implemented</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="page-break"></div>
+
+    <!-- Scenario 1 -->
+    <h2 class="section-heading">3. Scenario 1 — Course List Screen Implementation (5 Marks)</h2>
+
+    <h3 class="subsection-heading">Step 1: Model Class Design (<code>Course.java</code>)</h3>
+    <p>
+        The <code>Course</code> class encapsulates the data fields of an individual course. All fields are declared <code>private</code> to maintain strict object-oriented encapsulation and are initialized via a parameterized constructor:
+    </p>
+    <pre><code>package pk.edu.uol.coursecatalogue;
+
+public class Course {
+    private String code;
+    private String title;
+    private int creditHours;
+    private String instructor;
+    private String email;
+    private String description;
+
+    public Course(String code, String title, int creditHours, String instructor, String email, String description) {
+        this.code = code;
+        this.title = title;
+        this.creditHours = creditHours;
+        this.instructor = instructor;
+        this.email = email;
+        this.description = description;
+    }
+
+    public String getCode() { return code; }
+    public String getTitle() { return title; }
+    public int getCreditHours() { return creditHours; }
+    public String getInstructor() { return instructor; }
+    public String getEmail() { return email; }
+    public String getDescription() { return description; }
+}</code></pre>
+
+    <h3 class="subsection-heading">Step 2: CardView Item Layout (<code>item_course.xml</code>)</h3>
+    <p>
+        The item layout has <code>androidx.cardview.widget.CardView</code> as its root with <code>app:cardCornerRadius="14dp"</code> and <code>app:cardElevation="3dp"</code>. Inside, it defines three <code>TextView</code>s: <code>tvCourseCode</code>, <code>tvCreditHours</code>, and <code>tvCourseTitle</code>, styled with university badges and typography:
+    </p>
+    <pre><code>&lt;androidx.cardview.widget.CardView 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardCourse"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="12dp"
+    android:layout_marginTop="6dp"
+    android:layout_marginEnd="12dp"
+    android:layout_marginBottom="6dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground"
+    app:cardBackgroundColor="@color/surface"
+    app:cardCornerRadius="14dp"
+    app:cardElevation="3dp"
+    app:cardUseCompatPadding="true"&gt;
+
+    &lt;LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"&gt;
+
+        &lt;LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"&gt;
+
+            &lt;TextView
+                android:id="@+id/tvCourseCode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_badge_code"
+                android:paddingStart="10dp"
+                android:paddingTop="4dp"
+                android:paddingEnd="10dp"
+                android:paddingBottom="4dp"
+                android:text="CS02310"
+                android:textColor="@color/badge_code_text"
+                android:textSize="13sp"
+                android:textStyle="bold" /&gt;
+
+            &lt;View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" /&gt;
+
+            &lt;TextView
+                android:id="@+id/tvCreditHours"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_badge_credit"
+                android:drawableStart="@drawable/ic_time"
+                android:drawablePadding="4dp"
+                android:paddingStart="8dp"
+                android:paddingTop="3dp"
+                android:paddingEnd="8dp"
+                android:paddingBottom="3dp"
+                android:text="3 Credit Hours"
+                android:textColor="@color/badge_credit_text"
+                android:textSize="12sp"
+                android:textStyle="bold" /&gt;
+        &lt;/LinearLayout&gt;
+
+        &lt;TextView
+            android:id="@+id/tvCourseTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Mobile Application Development"
+            android:textColor="@color/text_primary"
+            android:textSize="16sp"
+            android:textStyle="bold" /&gt;
+    &lt;/LinearLayout&gt;
+&lt;/androidx.cardview.widget.CardView&gt;</code></pre>
+
+    <h3 class="subsection-heading">Step 3: CourseAdapter &amp; Static Inner ViewHolder</h3>
+    <p>
+        <code>CourseAdapter</code> extends <code>RecyclerView.Adapter&lt;CourseAdapter.CourseViewHolder&gt;</code>. A static inner class <code>CourseViewHolder</code> binds widget IDs once during inflation. The three essential lifecycle methods are overridden:
+    </p>
+    <ul>
+        <li><code>onCreateViewHolder()</code>: Inflates <code>item_course.xml</code> into a new <code>CourseViewHolder</code>.</li>
+        <li><code>onBindViewHolder()</code>: Populates code, title, and formatted credit hours from the backing collection.</li>
+        <li><code>getItemCount()</code>: Returns <code>courseList.size()</code>.</li>
+    </ul>
+
+    <h3 class="subsection-heading">Step 4: BS-SE Course Dataset &amp; LinearLayoutManager Setup</h3>
+    <p>
+        In <code>MainActivity.java</code>, an <code>ArrayList&lt;Course&gt;</code> is populated with 10 actual courses from the BS Software Engineering curriculum (e.g., CS02310 Mobile App Dev, SE03302 Software Design &amp; Architecture, CS03104 AI, etc.). A <code>LinearLayoutManager</code> is attached to <code>rvCourses</code>, and the adapter is assigned using <code>rvCourses.setAdapter(courseAdapter)</code>.
+    </p>
+
+    <h3 class="subsection-heading">Step 5: Comparative Testing — Without <code>setLayoutManager()</code></h3>
+    <div class="callout-box warning">
+        <strong>Observation from Scenario 1, Step 5:</strong> When the app is executed with <code>rvCourses.setLayoutManager(...)</code> commented out, the screen displays a <strong>completely blank, empty area</strong> below the catalogue header. No course cards are visible, even though 10 courses exist in memory.
+    </div>
+    <div class="callout-box">
+        <strong>Architectural Reason:</strong> The <code>RecyclerView</code> decouples data management from view positioning. The <code>Adapter</code> binds data to <code>ViewHolder</code> objects, but lacks spatial awareness. The <code>LayoutManager</code> alone possesses the logic to measure view dimensions, compute pixel coordinates, and execute the layout pass (<code>onLayout()</code>). Without an assigned <code>LayoutManager</code>, the <code>RecyclerView</code> cannot determine where or how to draw its children, leaving the screen blank. Once <code>LinearLayoutManager</code> is restored, it measures and stacks the cards in vertical sequence.
+    </div>
+
+    <!-- Screenshots Scenario 1 -->
+    <div class="screenshot-grid">
+        <div class="screenshot-card">
+            <img src="screenshots/01_course_list.png" alt="Course List Screen">
+            <div class="caption">1. Course List (With LinearLayoutManager)</div>
+        </div>
+        <div class="screenshot-card">
+            <img src="screenshots/02_course_list_scrolled.png" alt="Scrolled Course List">
+            <div class="caption">2. Scrolled List Showing BS-SE Courses</div>
+        </div>
+        <div class="screenshot-card">
+            <img src="screenshots/03_without_layout_manager.png" alt="Without LayoutManager">
+            <div class="caption">3. Blank List (Without setLayoutManager)</div>
+        </div>
+    </div>
+
+    <div class="page-break"></div>
+
+    <!-- Scenario 2 -->
+    <h2 class="section-heading">4. Scenario 2 — Course Details Screen Implementation (5 Marks)</h2>
+
+    <h3 class="subsection-heading">Step 1: Custom OnItemClickListener Interface</h3>
+    <p>
+        Inside <code>CourseAdapter</code>, a decoupled interface contract is formulated:
+    </p>
+    <pre><code>public interface OnItemClickListener {
+    void onItemClick(int position);
+}
+
+// In CourseViewHolder Constructor:
+itemView.setOnClickListener(new View.OnClickListener() {
+    @Override
+    public void onClick(View v) {
+        if (listener != null) {
+            int position = getBindingAdapterPosition();
+            if (position != RecyclerView.NO_POSITION) {
+                listener.onItemClick(position);
+            }
+        }
+    }
+});</code></pre>
+    <p>
+        <code>MainActivity</code> implements <code>CourseAdapter.OnItemClickListener</code> and passes <code>this</code> as the callback recipient.
+    </p>
+
+    <h3 class="subsection-heading">Step 2: Explicit Intent Navigation with Key Constants</h3>
+    <p>
+        In <code>onItemClick(int position)</code>, the tapped object is accessed with <code>courses.get(position)</code>. An explicit <code>Intent</code> is instantiated targeting <code>CourseDetailActivity.class</code> with public static final keys:
+    </p>
+    <pre><code>@Override
+public void onItemClick(int position) {
+    Course tappedCourse = courses.get(position);
+
+    Intent intent = new Intent(MainActivity.this, CourseDetailActivity.class);
+    intent.putExtra(CourseDetailActivity.EXTRA_CODE, tappedCourse.getCode());
+    intent.putExtra(CourseDetailActivity.EXTRA_TITLE, tappedCourse.getTitle());
+    intent.putExtra(CourseDetailActivity.EXTRA_CREDIT_HOURS, tappedCourse.getCreditHours());
+    intent.putExtra(CourseDetailActivity.EXTRA_INSTRUCTOR, tappedCourse.getInstructor());
+    intent.putExtra(CourseDetailActivity.EXTRA_EMAIL, tappedCourse.getEmail());
+    intent.putExtra(CourseDetailActivity.EXTRA_DESCRIPTION, tappedCourse.getDescription());
+
+    startActivity(intent);
+}</code></pre>
+
+    <h3 class="subsection-heading">Step 3: CourseDetailActivity &amp; Screen Title via <code>setTitle()</code></h3>
+    <p>
+        Declared in <code>AndroidManifest.xml</code> with parent activity navigation, <code>CourseDetailActivity</code> unpacks data using <code>getStringExtra()</code> and <code>getIntExtra()</code>, sets the ActionBar title dynamically using <code>setTitle(code)</code>, and populates all UI card containers:
+    </p>
+    <pre><code>Intent intent = getIntent();
+final String code = intent.getStringExtra(EXTRA_CODE);
+final String title = intent.getStringExtra(EXTRA_TITLE);
+int creditHours = intent.getIntExtra(EXTRA_CREDIT_HOURS, 0);
+String instructor = intent.getStringExtra(EXTRA_INSTRUCTOR);
+final String email = intent.getStringExtra(EXTRA_EMAIL);
+String description = intent.getStringExtra(EXTRA_DESCRIPTION);
+
+if (code != null &amp;&amp; !code.trim().isEmpty()) {
+    setTitle(code);
+} else {
+    setTitle("Course Details");
+}</code></pre>
+
+    <h3 class="subsection-heading">Step 4: "Email Instructor" Implicit Intent with Safe Exception Handling</h3>
+    <p>
+        A Material button triggers an implicit intent targeting dedicated email clients using <code>ACTION_SENDTO</code> with <code>mailto:</code> URI scheme. Wrapping the call in <code>try-catch</code> catches <code>ActivityNotFoundException</code>, safely displaying a <code>Toast</code> message without crashing:
+    </p>
+    <pre><code>btnEmailInstructor.setOnClickListener(new View.OnClickListener() {
+    @Override
+    public void onClick(View v) {
+        if (email == null || email.trim().isEmpty()) {
+            Toast.makeText(CourseDetailActivity.this, "Instructor email address not available.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
+        emailIntent.setData(Uri.parse("mailto:" + email));
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Query regarding course: " + code + " - " + title);
+
+        try {
+            startActivity(emailIntent);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(CourseDetailActivity.this, getString(R.string.no_email_app), Toast.LENGTH_LONG).show();
+        }
+    }
+});</code></pre>
+
+    <h3 class="subsection-heading">Step 5: Multi-Course Verification &amp; Two-Line Position Explanation</h3>
+    <div class="callout-box">
+        <strong>Two-Line Explanation (Scenario 2, Step 5):</strong><br>
+        The <code>position</code> passed to <code>onItemClick(int position)</code> specifies the exact zero-based index of the tapped card within the adapter's backing dataset.<br>
+        Calling <code>courses.get(position)</code> enables <code>MainActivity</code> to access the exact <code>Course</code> object clicked by the student, ensuring the explicit Intent carries only that course's parameters to <code>CourseDetailActivity</code>.
+    </div>
+
+    <!-- Screenshots Scenario 2 -->
+    <div class="screenshot-grid">
+        <div class="screenshot-card">
+            <img src="screenshots/04_detail_cs02310.png" alt="CS02310 Detail Screen">
+            <div class="caption">4. Details: CS02310 (Mobile App Dev)</div>
+        </div>
+        <div class="screenshot-card">
+            <img src="screenshots/05_detail_se03302.png" alt="SE03302 Detail Screen">
+            <div class="caption">5. Details: SE03302 (Software Design)</div>
+        </div>
+        <div class="screenshot-card">
+            <img src="screenshots/06_detail_cs03104.png" alt="CS03104 Detail Screen">
+            <div class="caption">6. Details: CS03104 (Artificial Intelligence)</div>
+        </div>
+    </div>
+
+    <div class="screenshot-grid grid-2">
+        <div class="screenshot-card">
+            <img src="screenshots/07_email_action.png" alt="Email Action Button">
+            <div class="caption">7. "Email Instructor" Action Dispatch</div>
+        </div>
+        <div class="screenshot-card">
+            <img src="screenshots/07_email_toast.png" alt="Safe Toast Handler">
+            <div class="caption">8. Safe Toast on ActivityNotFoundException</div>
+        </div>
+    </div>
+
+    <div class="page-break"></div>
+
+    <!-- Architectural Flow -->
+    <h2 class="section-heading">5. Runtime Execution &amp; Intent Dispatch Flow</h2>
+    <div class="flow-diagram">User Taps Course Card in RecyclerView
+       │
+       ▼
+CourseViewHolder.itemView.setOnClickListener() executes
+       │
+       ▼
+getBindingAdapterPosition() returns valid zero-based integer index
+       │
+       ▼
+listener.onItemClick(position) callback triggered
+       │
+       ▼
+MainActivity receives callback & executes: Course tapped = courses.get(position);
+       │
+       ▼
+Explicit Intent initialized: new Intent(MainActivity.this, CourseDetailActivity.class)
+       │
+       ▼
+Extras attached: EXTRA_CODE, EXTRA_TITLE, EXTRA_CREDIT_HOURS, EXTRA_INSTRUCTOR, etc.
+       │
+       ▼
+startActivity(intent) launches CourseDetailActivity
+       │
+       ▼
+CourseDetailActivity retrieves values via getStringExtra() / getIntExtra()
+       │
+       ▼
+ActionBar Title updated dynamically via: setTitle(code)
+       │
+       ▼
+User taps "Email Instructor" -> Implicit Intent: ACTION_SENDTO with mailto:
+       │
+       ▼
+Protected by try-catch: shows user-friendly Toast if no email client is found</div>
+
+    <!-- Viva Voce Section -->
+    <h2 class="section-heading">6. Viva Voce Key Concepts &amp; Technical Questions</h2>
+    <div class="q-card">
+        <div class="question">1. Why must the inner ViewHolder class be declared static?</div>
+        <div class="answer">Declaring the ViewHolder as <code>static</code> prevents it from maintaining an implicit reference to its enclosing <code>CourseAdapter</code> instance. This avoids potential memory leaks when the Activity or RecyclerView is recycled or destroyed during configuration changes.</div>
+    </div>
+    <div class="q-card">
+        <div class="question">2. Why is getBindingAdapterPosition() preferred over getAdapterPosition()?</div>
+        <div class="answer"><code>getAdapterPosition()</code> was deprecated starting in Android 11 (API 30) because when multiple adapters are merged (e.g., using <code>ConcatAdapter</code>), the overall adapter index can conflict with the individual sub-adapter index. <code>getBindingAdapterPosition()</code> deterministically returns the exact position relative to the specific adapter that bound the item.</div>
+    </div>
+    <div class="q-card">
+        <div class="question">3. Why use Intent.ACTION_SENDTO with "mailto:" rather than Intent.ACTION_SEND?</div>
+        <div class="answer"><code>ACTION_SEND</code> is a generic data-sharing action that opens any app accepting text/streams (WhatsApp, Drive, Messages, Twitter, Bluetooth). In contrast, <code>ACTION_SENDTO</code> combined with a <code>mailto:</code> URI filter exclusively targets dedicated email applications, guaranteeing that only email clients appear in the system chooser.</div>
+    </div>
+    <div class="q-card">
+        <div class="question">4. Why is package visibility (&lt;queries&gt;) declared in AndroidManifest.xml?</div>
+        <div class="answer">Starting in Android 11 (API 30), Android enforces package visibility filtering for enhanced user privacy. Without declaring <code>&lt;intent&gt;&lt;action android:name="android.intent.action.SENDTO"/&gt;&lt;data android:scheme="mailto"/&gt;&lt;/intent&gt;</code> under <code>&lt;queries&gt;</code>, the system hides third-party email clients from intent queries, causing resolution failures.</div>
+    </div>
+
+    <!-- Submission Checklist -->
+    <h2 class="section-heading">7. Submission Verification Checklist</h2>
+    <ul>
+        <li>&#x2705; <strong>Public GitHub Repository:</strong> <a href="https://github.com/aim1sh/LabTask2_RecyclerView_70147829">LabTask2_RecyclerView_70147829</a> created and pushed.</li>
+        <li>&#x2705; <strong>Project ZIP Archive:</strong> <code>LabTask2_RecyclerView_70147829.zip</code> exported cleanly for SLATE.</li>
+        <li>&#x2705; <strong>Task Report:</strong> Available in PDF (<code>LabTask_Report.pdf</code>), Markdown (<code>LabTask_Report.md</code>), and HTML formats.</li>
+        <li>&#x2705; <strong>All Marks Criteria Fulfilled:</strong> 10 / 10 marks covered with verified execution screenshots.</li>
+    </ul>
+
+</div>
+
+</body>
+</html>
